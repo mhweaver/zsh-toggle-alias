@@ -5,7 +5,7 @@ function _collapse_git_aliases() {
       git config --get-regexp "^alias\..+$" | sort | while read k v; do
         k="${k#alias.}"
         if [[ "$1" = "git $v" || "$1" = "git $v "* ]]; then
-          echo "$1" | sed -e "s/git ${v}/git ${k}/"
+          echo "${1/"git ${v}"/"git ${k}"}"
 		  return 0
         fi
       done
@@ -25,7 +25,7 @@ function _collapse_global_aliases() {
     v="${(Q)tokens[2]}"
 
     if [[ "$1" = *"$v"* ]]; then
-      echo "$1" | sed -e "s/${v}/${k}/g"
+      echo "${1/"${v}"/"${k}"}"
 	  return 0
     fi
   done
@@ -70,7 +70,7 @@ function _collapse_aliases() {
   if [[ -z "$best_match" ]]; then
 	  echo "$1"
   else
-	echo "$1" | sed -e "s/${best_match_value}/${best_match}/"
+    echo "${1/"${best_match_value}"/"${best_match}"}"
   fi
   return 0
 }
