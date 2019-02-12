@@ -5,9 +5,9 @@ A simple plugin that lets you expand and collapse ZSH aliases.
 It uses the alias discovery logic of `You Should Use`_ (which this plugin is forked from) to collapse a command into an alias.
 If the command is already an alias, you can expand it into the full command, similar to `globalias`_
 
-The plugin operates on the input to the left of the cursor to find aliases. It operates on the whole input when expanding aliases.
-
 To expand/collapse an alias, hit ``ctrl``-``space``
+
+For alias expansion to work, the cursor must be on or adjacent to the alias.
 
 Note: This should not be used alongside `globalias`_, unless you feel like changing the keybindings. It should play nicely with `You Should Use`_, though.
 

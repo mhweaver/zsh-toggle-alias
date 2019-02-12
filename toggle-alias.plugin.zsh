@@ -1,19 +1,20 @@
-function _find_git_aliases() {
+function _collapse_git_aliases() {
   if [[ "$1" = "git "* ]]; then
       local k
       local v
       git config --get-regexp "^alias\..+$" | sort | while read k v; do
         k="${k#alias.}"
         if [[ "$1" = "git $v" || "$1" = "git $v "* ]]; then
-          echo "git $k"
+          echo "$1" | sed -e "s/git ${v}/git ${k}/"
 		  return 0
         fi
       done
   fi
+  echo "$1"
 }
 
 
-function _find_global_aliases() {
+function _collapse_global_aliases() {
   local tokens
   local k
   local v
@@ -24,14 +25,15 @@ function _find_global_aliases() {
     v="${(Q)tokens[2]}"
 
     if [[ "$1" = *"$v"* ]]; then
-      echo "$k"
+      echo "$1" | sed -e "s/${v}/${k}/g"
 	  return 0
     fi
   done
+  echo "$1"
 }
 
 
-function _find_aliases() {
+function _collapse_aliases() {
   local found_aliases
   found_aliases=()
   local best_match=""
@@ -65,18 +67,22 @@ function _find_aliases() {
     fi
   done
 
-  echo "$best_match"
+  if [[ -z "$best_match" ]]; then
+	  echo "$1"
+  else
+	echo "$1" | sed -e "s/${best_match_value}/${best_match}/"
+  fi
   return 0
 }
 
 function collapse_alias() {
-	local MATCH="$(_find_aliases $LBUFFER)"
-	if [[ -z $MATCH ]]; then
-		MATCH="$(_find_global_aliases $LBUFFER)"
+	local MATCH="$(_collapse_aliases $BUFFER)"
+	if [[ $BUFFER = $MATCH ]]; then
+		MATCH="$(_collapse_global_aliases $BUFFER)"
 	fi
 
-	if [[ -n $MATCH ]]; then
-		LBUFFER="$MATCH"
+	if [[ $BUFFER != $MATCH ]]; then
+		BUFFER="$MATCH"
 	else
 		zle _expand_alias
 		zle expand-word
