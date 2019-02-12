@@ -7,8 +7,6 @@ If the command is already an alias, you can expand it into the full command, sim
 
 To expand/collapse an alias, hit ``ctrl``-``space``
 
-For alias expansion to work, the cursor must be on or adjacent to the alias.
-
 Note: This should not be used alongside `globalias`_, unless you feel like changing the keybindings. It should play nicely with `You Should Use`_, though.
 
 .. _You Should Use: https://github.com/MichaelAquilina/zsh-you-should-use

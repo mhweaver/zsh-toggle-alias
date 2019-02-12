@@ -75,6 +75,15 @@ function _collapse_aliases() {
   return 0
 }
 
+function expand_aliases() {
+  # https://unix.stackexchange.com/a/150737
+  unset 'functions[_expand-aliases]'
+  functions[_expand-aliases]=$BUFFER
+  (($+functions[_expand-aliases])) &&
+    BUFFER=${functions[_expand-aliases]#$'\t'} &&
+    CURSOR=$#BUFFER
+}
+
 function collapse_alias() {
 	local MATCH="$(_collapse_aliases $BUFFER)"
 	if [[ $BUFFER = $MATCH ]]; then
@@ -84,8 +93,9 @@ function collapse_alias() {
 	if [[ $BUFFER != $MATCH ]]; then
 		BUFFER="$MATCH"
 	else
-		zle _expand_alias
-		zle expand-word
+		#zle _expand_alias
+		#zle expand-word
+		expand_aliases
 	fi
 }
 
