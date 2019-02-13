@@ -33,7 +33,7 @@ function _collapse_global_aliases() {
 }
 
 
-function _collapse_aliases() {
+function _toggle_aliases() {
   local found_aliases
   found_aliases=()
   local best_match=""
@@ -75,7 +75,7 @@ function _collapse_aliases() {
   return 0
 }
 
-function expand_aliases() {
+function _expand_aliases() {
   # https://unix.stackexchange.com/a/150737
   unset 'functions[_expand-aliases]'
   functions[_expand-aliases]=$BUFFER
@@ -84,23 +84,27 @@ function expand_aliases() {
     CURSOR=$#BUFFER
 }
 
-function collapse_alias() {
-	local MATCH="$(_collapse_aliases $BUFFER)"
-	if [[ $BUFFER = $MATCH ]]; then
-		MATCH="$(_collapse_global_aliases $BUFFER)"
-	fi
+function _collapse_aliases() {
+	local collapsed="$1"
+	collapsed="$(_collapse_git_aliases $collapsed)"
+	collapsed="$(_collapse_global_aliases $collapsed)"
+	collapsed="$(_toggle_aliases $collapsed)"
+	echo "$collapsed"
+}
 
+function toggle_alias() {
+	local MATCH="$(_collapse_aliases $BUFFER)"
 	if [[ $BUFFER != $MATCH ]]; then
 		BUFFER="$MATCH"
 	else
 		#zle _expand_alias
 		#zle expand-word
-		expand_aliases
+		_expand_aliases
 	fi
 }
 
-zle -N collapse_alias
-bindkey -M emacs "^ " collapse_alias
+zle -N toggle_alias
+bindkey -M emacs "^ " toggle_alias
 bindkey -M emacs " " magic-space
-bindkey -M viins "^ " collapse_alias
+bindkey -M viins "^ " toggle_alias
 bindkey -M viins " " magic-space
