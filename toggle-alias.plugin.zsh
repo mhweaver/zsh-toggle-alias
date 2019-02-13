@@ -86,12 +86,12 @@ function _expand_aliases() {
 
 function _collapse_aliases() {
 	local collapsed="$1"
-	if [[ "$collapsed" = "$1" ]]; then
-		collapsed="$(_collapse_git_aliases $collapsed)"
+	#if [[ "$collapsed" = "$1" ]]; then
+	#	collapsed="$(_collapse_git_aliases $collapsed)"
+	if [[ "$collapsed" == "$1" ]]; then
+		collapsed="$(_toggle_aliases $collapsed)"
 	elif [[ "$collapsed" = "$1" ]]; then
 		collapsed="$(_collapse_global_aliases $collapsed)"
-	elif [[ "$collapsed" = "$1" ]]; then
-		collapsed="$(_toggle_aliases $collapsed)"
 	fi
 	echo "$collapsed"
 }
